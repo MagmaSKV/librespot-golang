@@ -183,19 +183,37 @@ func makeLoginBlobPacket(username string, authData []byte,
 	versionString := "librespot-golang_" + Version + "_" + BuildID
 
 	packet := &Spotify.ClientResponseEncrypted{
-		LoginCredentials: &Spotify.LoginCredentials{
-			Username: proto.String(username),
-			Typ:      authType,
-			AuthData: authData,
-		},
-		SystemInfo: &Spotify.SystemInfo{
-			CpuFamily:               Spotify.CpuFamily_CPU_UNKNOWN.Enum(),
-			Os:                      Spotify.Os_OS_UNKNOWN.Enum(),
-			SystemInformationString: proto.String("librespot-golang"),
-			DeviceId:                proto.String(deviceId),
-		},
-		VersionString: proto.String(versionString),
+        LoginCredentials: &Spotify.LoginCredentials{
+            Username: proto.String(username),
+            Typ:      authType,
+            AuthData: authData,
+        },
+        AccountCreation: Spotify.AccountCreation_ACCOUNT_CREATION_ALWAYS_PROMPT.Enum(),
+        SystemInfo: &Spotify.SystemInfo{
+            CpuFamily: Spotify.CpuFamily_CPU_X86_64.Enum(),
+            CpuSubtype:              proto.Uint32(0),
+            Brand: Spotify.Brand_BRAND_UNBRANDED.Enum(),
+            BrandFlags:              proto.Uint32(0),
+            Os:                      Spotify.Os_OS_LINUX.Enum(),
+            OsVersion:               proto.Uint32(0),
+            OsExt:                   proto.Uint32(0),
+            SystemInformationString: proto.String("Linux [x86-64 0]"),
+            DeviceId:                proto.String("libspotify"),
+        },
+        PlatformModel: proto.String("PC desktop"),
+        VersionString: ...,
+        ClientInfo: &Spotify.ClientInfo{
+            Limited:  proto.Bool(false),
+            Language: proto.String("en"),
+        },
 	}
+
+	packetData, err := proto.Marshal(packet)
+	if err != nil {
+		log.Fatal("login marshaling error: ", err)
+	}
+	return packetData
+}
 
 	packetData, err := proto.Marshal(packet)
 	if err != nil {
